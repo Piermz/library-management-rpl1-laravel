@@ -48,24 +48,39 @@ class booksController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $book = Books::findOrFail($id);
+        return view('books.show', compact('book'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit($id)
     {
-        //
+        $book = Books::findOrFail($id);
+        return view('books.edit', compact('book'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
+         public function update(Request $request, string $id)
+         {
+             $validatedData = $request->validate([
+                 'judul' => 'required|max:255',
+                 'penulis' => 'required|max:255',
+                 'kategori' => 'required',
+                 'tahun_terbit' => 'required',
+                 'jumlah_stok' => 'required|integer',
+                 'status' => 'required',
+                 'deskripsi' => 'nullable',
+             ]);
+
+             $book = Books::findOrFail($id);
+             $book->update($validatedData);
+
+             return redirect()->route('books.index')->with('success', 'Buku berhasil diupdate!');
+         }
 
     /**
      * Remove the specified resource from storage.
